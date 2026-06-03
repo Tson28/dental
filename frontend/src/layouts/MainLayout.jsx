@@ -19,7 +19,8 @@ import {
   LogOut, 
   Menu,
   X,
-  Activity
+  Activity,
+  UserCheck
 } from 'lucide-react'
 import { useState } from 'react'
 import { ROLE_LABELS } from '../lib/utils'
@@ -38,6 +39,10 @@ const MainLayout = ({ children }) => {
   const navigation = [
     { name: 'Dashboard', href: '/', icon: LayoutDashboard },
     { name: 'Lịch hẹn', href: '/appointments', icon: Calendar },
+    ...(user?.role === 'ADMIN' || user?.role === 'DOCTOR'
+      ? [{ name: 'Bệnh nhân', href: '/patients', icon: UserCheck }]
+      : []
+    ),
     ...(user?.role === 'ADMIN' 
       ? [{ name: 'Người dùng', href: '/users', icon: Users }]
       : []

@@ -19,8 +19,10 @@ export const register = createAsyncThunk(
   'auth/register',
   async (userData, { rejectWithValue }) => {
     try {
+      console.log('[REGISTER THUNK] Sending:', JSON.stringify(userData, null, 2));
       const response = await api.post('/auth/register', userData)
-      return response.data.data
+      console.log('[REGISTER THUNK] Response:', JSON.stringify(response.data, null, 2));
+      return response.data
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || 'Đăng ký thất bại'
@@ -88,6 +90,7 @@ export const changePassword = createAsyncThunk(
 const initialState = {
   user: null,
   accessToken: null,
+  refreshToken: null,
   isAuthenticated: false,
   isLoading: false,
   error: null,
@@ -115,8 +118,8 @@ const authSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.isLoading = false
         state.isAuthenticated = true
-        state.user = action.payload.user
-        state.accessToken = action.payload.accessToken
+        state.user = action.payload?.data?.user || action.payload?.user
+        state.accessToken = action.payload?.data?.accessToken || action.payload?.accessToken
         state.error = null
       })
       .addCase(login.rejected, (state, action) => {
@@ -132,8 +135,9 @@ const authSlice = createSlice({
       .addCase(register.fulfilled, (state, action) => {
         state.isLoading = false
         state.isAuthenticated = true
-        state.user = action.payload.user
-        state.accessToken = action.payload.accessToken
+        state.user = action.payload?.data?.user || action.payload?.user
+        state.accessToken = action.payload?.data?.accessToken || action.payload?.accessToken
+        state.refreshToken = action.payload?.data?.refreshToken || action.payload?.refreshToken
         state.error = null
       })
       .addCase(register.rejected, (state, action) => {
@@ -155,6 +159,7 @@ const authSlice = createSlice({
         state.isAuthenticated = false
         state.user = null
         state.accessToken = null
+        state.refreshToken = null
       })
       
       .addCase(getProfile.pending, (state) => {
@@ -162,7 +167,7 @@ const authSlice = createSlice({
       })
       .addCase(getProfile.fulfilled, (state, action) => {
         state.isLoading = false
-        state.user = action.payload
+        state.user = action.payload?.data || action.payload
       })
       .addCase(getProfile.rejected, (state, action) => {
         state.isLoading = false
@@ -175,7 +180,7 @@ const authSlice = createSlice({
       })
       .addCase(updateProfile.fulfilled, (state, action) => {
         state.isLoading = false
-        state.user = action.payload
+        state.user = action.payload?.data || action.payload
       })
       .addCase(updateProfile.rejected, (state, action) => {
         state.isLoading = false

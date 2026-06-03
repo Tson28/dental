@@ -102,6 +102,14 @@ src/
 - Schedule management
 - Status tracking
 
+### Patients Collection
+- Patient personal information (name, DOB, gender, phone, email, address)
+- Emergency contact details
+- Insurance information
+- Medical tags (VIP, urgent, pediatric, etc.)
+- Uploaded documents (X-rays, lab results, prescriptions)
+- Soft delete support
+
 ### Medical Records Collection
 - Patient history
 - Treatment notes
@@ -114,20 +122,32 @@ src/
 
 ### RESTful Endpoints
 
-| Method | Endpoint                    | Description              | Auth Required | Roles      |
-|--------|-----------------------------|--------------------------|---------------|------------|
-| POST   | /api/auth/register          | Register new user        | No            | -          |
-| POST   | /api/auth/login             | User login               | No            | -          |
-| POST   | /api/auth/refresh           | Refresh tokens           | No            | -          |
-| POST   | /api/auth/logout            | Logout user              | Yes           | All        |
-| GET    | /api/users                  | List all users           | Yes           | ADMIN      |
-| GET    | /api/users/:id              | Get user by ID           | Yes           | ADMIN      |
-| PUT    | /api/users/:id              | Update user              | Yes           | ADMIN      |
-| DELETE | /api/users/:id              | Delete user              | Yes           | ADMIN      |
-| GET    | /api/appointments           | List appointments        | Yes           | All        |
-| POST   | /api/appointments           | Create appointment       | Yes           | USER,ADMIN |
-| PUT    | /api/appointments/:id       | Update appointment       | Yes           | DOCTOR,ADMIN|
-| DELETE | /api/appointments/:id       | Cancel appointment       | Yes           | All        |
+| Method | Endpoint                           | Description              | Auth Required | Roles           |
+|--------|------------------------------------|-------------------------|---------------|-----------------|
+| POST   | /api/auth/register                 | Register new user       | No            | -               |
+| POST   | /api/auth/login                    | User login              | No            | -               |
+| POST   | /api/auth/refresh                  | Refresh tokens          | No            | -               |
+| POST   | /api/auth/logout                   | Logout user             | Yes           | All             |
+| GET    | /api/users                         | List all users          | Yes           | ADMIN           |
+| GET    | /api/users/:id                     | Get user by ID          | Yes           | ADMIN           |
+| PUT    | /api/users/:id                     | Update user             | Yes           | ADMIN           |
+| DELETE | /api/users/:id                     | Delete user             | Yes           | ADMIN           |
+| GET    | /api/patients                      | List patients          | Yes           | All             |
+| POST   | /api/patients                      | Create patient         | Yes           | All             |
+| GET    | /api/patients/:id                  | Get patient detail     | Yes           | All             |
+| PUT    | /api/patients/:id                  | Update patient         | Yes           | All             |
+| DELETE | /api/patients/:id                  | Soft-delete patient    | Yes           | ADMIN,DOCTOR    |
+| PATCH  | /api/patients/:id/restore          | Restore patient        | Yes           | ADMIN           |
+| POST   | /api/patients/:id/documents         | Add document           | Yes           | ADMIN,DOCTOR    |
+| DELETE | /api/patients/:id/documents/:docId  | Remove document         | Yes           | ADMIN,DOCTOR    |
+| POST   | /api/patients/:id/tags             | Add patient tag        | Yes           | ADMIN,DOCTOR    |
+| DELETE | /api/patients/:id/tags/:tagName     | Remove patient tag     | Yes           | ADMIN,DOCTOR    |
+| GET    | /api/patients/:id/medical-history  | Get medical history   | Yes           | All             |
+| GET    | /api/patients/stats                | Get patient stats      | Yes           | ADMIN,DOCTOR    |
+| GET    | /api/appointments                  | List appointments      | Yes           | All             |
+| POST   | /api/appointments                  | Create appointment     | Yes           | USER,ADMIN      |
+| PUT    | /api/appointments/:id              | Update appointment     | Yes           | DOCTOR,ADMIN    |
+| DELETE | /api/appointments/:id              | Cancel appointment     | Yes           | All             |
 
 ## 7. Project Structure
 
@@ -136,13 +156,13 @@ dental/
 ├── backend/
 │   ├── src/
 │   │   ├── config/          # DB, env configs
-│   │   ├── controllers/    # Request handlers
+│   │   ├── controllers/    # Request handlers (Auth, User, Appointment, Patient)
 │   │   ├── middleware/      # Auth, validation, error
-│   │   ├── models/          # Mongoose schemas
+│   │   ├── models/          # Mongoose schemas (User, Appointment, MedicalRecord, Service, Patient)
 │   │   ├── repositories/    # Data access layer
 │   │   ├── routes/          # Express routes
 │   │   ├── services/        # Business logic
-│   │   ├── utils/           # Helpers
+│   │   ├── utils/           # Helpers, Zod schemas
 │   │   └── index.js         # Entry point
 │   ├── package.json
 │   └── .env.example
@@ -150,12 +170,12 @@ dental/
 ├── frontend/
 │   ├── src/
 │   │   ├── app/             # Redux store
-│   │   ├── components/       # UI components
-│   │   ├── features/         # Feature modules
+│   │   ├── components/       # UI components (shadcn/ui)
+│   │   ├── features/         # Redux slices (auth, patients)
 │   │   ├── hooks/            # Custom hooks
 │   │   ├── layouts/          # Page layouts
 │   │   ├── lib/              # Utils, axios
-│   │   ├── pages/            # Route pages
+│   │   ├── pages/            # Route pages (auth, dashboard, appointments, patients, users)
 │   │   ├── routes/            # Router config
 │   │   └── main.jsx          # Entry point
 │   ├── index.html

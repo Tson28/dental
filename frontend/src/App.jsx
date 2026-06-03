@@ -12,6 +12,8 @@ import AppointmentsPage from './pages/appointments/AppointmentsPage'
 import UsersPage from './pages/users/UsersPage'
 import ProfilePage from './pages/profile/ProfilePage'
 import NotFoundPage from './pages/NotFoundPage'
+import PatientListPage from './pages/patients/PatientListPage'
+import PatientDetailPage from './pages/patients/PatientDetailPage'
 
 function App() {
   return (
@@ -27,6 +29,13 @@ function App() {
             <Route path="/" element={<DashboardPage />} />
             <Route path="/appointments" element={<AppointmentsPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+          </Route>
+        </Route>
+
+        <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'DOCTOR']} />}>
+          <Route element={<DashboardLayout />}>
+            <Route path="/patients" element={<PatientListPage />} />
+            <Route path="/patients/:id" element={<PatientDetailPage />} />
           </Route>
         </Route>
 

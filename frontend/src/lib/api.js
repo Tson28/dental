@@ -30,11 +30,12 @@ api.interceptors.request.use(
   (config) => {
     const state = store.getState()
     const accessToken = state.auth.accessToken
-    
+
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`
     }
-    
+
+    console.log('[API REQUEST]', config.method?.toUpperCase(), config.url, 'Body:', JSON.stringify(config.data));
     return config
   },
   (error) => {

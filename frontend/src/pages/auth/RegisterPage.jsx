@@ -38,7 +38,9 @@ const RegisterPage = () => {
       return
     }
 
+    console.log('[REGISTER FORM] formData:', JSON.stringify(formData, null, 2));
     const { confirmPassword, ...registerData } = formData
+    console.log('[REGISTER FORM] registerData:', JSON.stringify(registerData, null, 2));
     const result = await dispatch(register(registerData))
     
     if (register.fulfilled.match(result)) {
